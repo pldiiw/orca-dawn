@@ -93,10 +93,47 @@ jobs:
           key: dawn-${{ runner.os }}-${{ runner.arch }}-${{ steps.dawn-version.outputs.DAWN_COMMIT }}-${{ inputs.config }}
 
       - name: Build Dawn
-        if: steps.cache-dawn.outputs.cache-hit != 'true' || inputs.ignore-cache == 'true' 
+        if: steps.cache-dawn.outputs.cache-hit != 'true' || inputs.ignore-cache == 'true'
         run: python build.py --parallel=4 --config=${{ inputs.config }}
 
       - uses: actions/upload-artifact@v4
         with:
           name: dawn-mac-${{steps.dawn-version.outputs.LOWERCASE_ARCH}}
+          path: build/dawn.out
+
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        id: install-dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libxrandr-dev libxinerama-dev libxcursor-dev mesa-common-dev libx11-xcb-dev libxi-dev pkg-config
+
+      - uses: actions/checkout@v4
+
+      - name: Dawn version
+        id: dawn-version
+        run: |
+          echo "DAWN_COMMIT=$(cat commit.txt)" >> $GITHUB_OUTPUT
+
+      - name: Cache
+        id: cache-dawn
+        uses: actions/cache@v3
+        if: inputs.ignore-cache != 'true'
+        with:
+          path: build/dawn.out
+          key: dawn-${{ runner.os }}-${{ runner.arch }}-${{ steps.dawn-version.outputs.DAWN_COMMIT }}-${{ inputs.config }}
+
+      - name: Build Dawn
+        if: steps.cache-dawn.outputs.cache-hit != 'true' || inputs.ignore-cache == 'true'
+        run: python build.py --parallel=4 --config=${{ inputs.config }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dawn-linux-x64
           path: build/dawn.out
