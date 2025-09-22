@@ -115,7 +115,7 @@ target_sources(webgpu PRIVATE ${WEBGPU_DAWN_NATIVE_PROC_GEN})"""
             "-D", "DAWN_ENABLE_OPENGLES=OFF",
             "-D", "DAWN_ENABLE_VULKAN=OFF"
         ]
-    else:
+    elif platform.system() == "Darwin":
         backends = [
             "-D", "DAWN_ENABLE_METAL=ON",
             "-D", "DAWN_ENABLE_NULL=OFF",
@@ -123,6 +123,15 @@ target_sources(webgpu PRIVATE ${WEBGPU_DAWN_NATIVE_PROC_GEN})"""
             "-D", "DAWN_ENABLE_OPENGLES=OFF",
             "-D", "DAWN_ENABLE_VULKAN=OFF"
         ]
+    elif platform.system() == "Linux":
+        backends = [
+            "-D", "DAWN_ENABLE_NULL=OFF",
+            "-D", "DAWN_ENABLE_DESKTOP_GL=OFF",
+            "-D", "DAWN_ENABLE_OPENGLES=OFF",
+            "-D", "DAWN_ENABLE_VULKAN=ON"
+        ]
+    else:
+        assert False, "Unsupported OS"
 
     subprocess.run([
         "cmake",
@@ -163,8 +172,12 @@ target_sources(webgpu PRIVATE ${WEBGPU_DAWN_NATIVE_PROC_GEN})"""
     if platform.system() == "Windows":
         shutil.copy(f"dawn.build/{config}/webgpu.dll", "dawn.out/lib/")
         shutil.copy(f"dawn.build/src/dawn/native/{config}/webgpu.lib", "dawn.out/lib/")
-    else:
+    elif platform.system() == "Darwin":
         shutil.copy("dawn.build/src/dawn/native/libwebgpu.dylib", "dawn.out/lib/")
+    elif platform.system() == "Linux":
+        shutil.copy("dawn.build/src/dawn/native/libwebgpu.so", "dawn.out/lib/")
+    else:
+        assert False, "Unsupported OS"
 
     # ensure line endings are consistent between windows/unix systems since they
     # will be used in the Orca project

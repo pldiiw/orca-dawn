@@ -31,6 +31,7 @@ jobs:
           tar --format=ustar -czf ../release/dawn-windows-x64.tar.gz dawn-windows-x64
           tar --format=ustar -czf ../release/dawn-mac-x64.tar.gz dawn-mac-x64
           tar --format=ustar -czf ../release/dawn-mac-arm64.tar.gz dawn-mac-arm64
+          tar --format=ustar -czf ../release/dawn-linux-x64.tar.gz dawn-linux-x64
 
       - uses: ncipollo/release-action@v1
         with:
