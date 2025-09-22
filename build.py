@@ -129,6 +129,8 @@ target_sources(webgpu PRIVATE ${WEBGPU_DAWN_NATIVE_PROC_GEN})"""
             "-D", "DAWN_ENABLE_DESKTOP_GL=OFF",
             "-D", "DAWN_ENABLE_OPENGLES=OFF",
             "-D", "DAWN_ENABLE_VULKAN=ON"
+            "-D", "DAWN_USE_WAYLAND=ON"
+            "-D", "DAWN_USE_X11=ON"
         ]
     else:
         assert False, "Unsupported OS"
